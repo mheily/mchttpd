@@ -1,0 +1,6 @@
+This is a fork of Jef Poskanzer's "micro_httpd" project, with
+added support for running under Capsicum and Relaunchd.
+
+See the README.micro_httpd for the original README that came with
+the micro_httpd_14Aug2014 source code.
+
