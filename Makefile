@@ -6,7 +6,10 @@ CFLAGS += 	-DUSE_CAPSICUM=1 -Werror
 #SYSVLIBS =	-lnsl -lsocket
 LDFLAGS =	-s $(SYSVLIBS)
 
-all:		micro_httpd
+all:		micro_httpd micro_httpd_debug
+
+micro_httpd_debug:	micro_httpd.c cap_stub.c
+	$(CC) $(CFLAGS) -O0 -g -o micro_httpd_debug *.c
 
 micro_httpd:	micro_httpd.o cap_stub.o
 	$(CC) micro_httpd.o cap_stub.o $(LDFLAGS) -o micro_httpd
@@ -24,9 +27,14 @@ install:	all
 	cp micro_httpd.8 $(MANDIR)/micro_httpd.8
 
 clean:
-	rm -f micro_httpd *.o core core.* *.core hello_world
+	rm -f micro_httpd micro_httpd_debug *.o core core.* *.core hello_world
 
-check:	micro_httpd
+check:	micro_httpd_debug
+	# Test 1 - a simple file
 	echo 'hello world' > hello_world
-	printf 'GET /hello_world HTTP/1.0\r\n\r\n' | ./micro_httpd `pwd`
+	printf 'GET /hello_world HTTP/1.0\r\n\r\n' | ./micro_httpd_debug `pwd`
 	rm hello_world
+	
+	# Test 2 - a directory
+	printf 'GET / HTTP/1.0\r\n\r\n' | ./micro_httpd_debug `pwd`
+	

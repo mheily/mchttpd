@@ -102,6 +102,7 @@ main( int argc, char** argv )
     len = strlen( file );
     if ( file[0] == '/' || strcmp( file, ".." ) == 0 || strncmp( file, "../", 3 ) == 0 || strstr( file, "/../" ) != (char*) 0 || strcmp( &(file[len-3]), "/.." ) == 0 )
 	send_error( 400, "Bad Request", (char*) 0, "Illegal filename." );
+    printf("stat: %s\n", file);
     if ( stat( file, &sb ) < 0 )
 	send_error( 404, "Not Found", (char*) 0, "File not found." );
     if ( S_ISDIR( sb.st_mode ) )

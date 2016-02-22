@@ -24,4 +24,9 @@ int cap_fsemu_chdir(const char *path);
 int cap_fsemu_stat(const char *path, struct stat *sb);
 FILE * cap_fsemu_fopen(const char * restrict path, const char * restrict mode);
 
+int
+cap_fsemu_scandir(const char *dirname, struct dirent ***namelist,
+    int (*select)(const struct dirent *),
+    int (*compar)(const struct dirent **, const struct dirent **));
+
 #endif /* !_CAP_FSEMU_H */
