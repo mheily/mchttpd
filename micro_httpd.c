@@ -33,6 +33,10 @@
 #include <dirent.h>
 #include <ctype.h>
 #include <time.h>
+#if USE_CAPSICUM
+#include <sys/capability.h>
+#include "./cap_fsemu.h"
+#endif
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -64,6 +68,15 @@ main( int argc, char** argv )
     FILE* fp;
     struct dirent **dl;
     int i, n;
+
+#if USE_CAPSICUM
+    if (cap_fsemu_init() < 0)
+    	send_error( 500, "Internal Error", (char*) 0, "cap_fsemu_init() failed" );
+    if (cap_fsemu_mount(argv[1], argv[1], O_RDONLY) < 0)
+    	send_error( 500, "Internal Error", (char*) 0, "cap_fsemu_mount() failed" );
+    if (cap_enter() < 0)
+    	send_error( 500, "Internal Error", (char*) 0, "cap_enter() failed" );
+#endif
 
     if ( argc != 2 )
 	send_error( 500, "Internal Error", (char*) 0, "Config error - no dir specified." );
